@@ -1,7 +1,7 @@
 # SubHunter-Go
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PhilopaterSh/SubHunter-Ph.Sh/main/imgs/logo.png" alt="SubHunter-Go Logo" width="150">
+  <img src="Ph.Sh-Sudbomain.png" alt="SubHunter-Go Logo" width="150">
 </p>
 
 <h3 align="center">A Fast and Concurrent Subdomain Enumeration Tool</h3>
