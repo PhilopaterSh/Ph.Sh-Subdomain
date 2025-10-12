@@ -49,13 +49,13 @@ SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. I
 
 ## Installation
 
-The recommended way to install is using `go install`, which makes the command available globally.
+The recommended way to install is using `go install`, which makes the command available globally from your terminal.
 
 ```sh
-go install -v github.com/PhilopaterSh/Ph.Sh-Sudbomain/SubHunter-Go@latest
+go install -v github.com/PhilopaterSh/Ph.Sh_Sub@latest
 ```
 
-**Note:** This will install the binary with the name `SubHunter-Go`. To use a custom name like `Ph.Sh_Sub`, please see the **Building from Source** section below and move the compiled binary to a directory in your system's `PATH`.
+**Note:** This command will install the binary (named `Ph.Sh_Sub` or `Ph.Sh_Sub.exe`) into your Go binary path (e.g., `$GOPATH/bin` or `$HOME/go/bin`). Ensure this directory is in your system's `PATH` to run the tool from anywhere.
 
 ## Usage
 
@@ -130,25 +130,4 @@ export SHODAN_API_KEY="YOUR_SHODAN_KEY"
 # Example for Windows (Command Prompt)
 set URLSCAN_API_KEY="YOUR_URLSCAN_KEY"
 set VT_API_KEY="YOUR_VT_API_KEY"
-```
-
-## Building from Source
-
-If you prefer to build from source:
-
-1.  Clone the repository.
-2.  Navigate to the `SubHunter-Go` directory.
-3.  Run the build command:
-    ```sh
-    # Build for your current OS
-    go build -o Ph.Sh_Sub .
-    ```
-
-### Cross-Compilation (e.g., for Kali Linux)
-
-To build for a different OS/Architecture, set the `GOOS` and `GOARCH` environment variables.
-
-```sh
-# Build for Linux (64-bit) from any OS
-GOOS=linux GOARCH=amd64 go build -o Ph.Sh_Sub .
 ```
