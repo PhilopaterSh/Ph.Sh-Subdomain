@@ -45,7 +45,10 @@ SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. I
 ## Requirements
 
 - **Go**: Version 1.18 or newer (only required for installation or building from source).
-- **Python**: The `digger` engine requires Python and the `cloudscraper` library to be installed (`pip install cloudscraper`).
+- **Python**: Version 3.6+ is recommended. The `digger` engine requires Python and some external libraries. You can install them using pip:
+  ```sh
+  pip install -r requirements.txt
+  ```
 
 ## Installation
 
