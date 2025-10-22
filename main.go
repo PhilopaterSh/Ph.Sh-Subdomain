@@ -58,6 +58,13 @@ func cleanAndUniqueSubdomains(subdomains []string) []string {
 	return cleaned
 }
 
+// cleanDomainLine removes invalid characters from a line in the domain list file.
+func cleanDomainLine(line string) string {
+	// This regex removes anything that is not a letter, number, dot, or hyphen.
+	reg := regexp.MustCompile(`[^a-zA-Z0-9.-]`)
+	return reg.ReplaceAllString(line, "")
+}
+
 func showAsciiArt() {
 	fmt.Println(`
   _____   _            _____ _     
@@ -101,7 +108,10 @@ func main() {
 
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
-			domains = append(domains, scanner.Text())
+			cleanedLine := cleanDomainLine(scanner.Text())
+			if cleanedLine != "" {
+				domains = append(domains, cleanedLine)
+			}
 		}
 
 		if err := scanner.Err(); err != nil {

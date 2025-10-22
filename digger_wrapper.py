@@ -19,8 +19,11 @@ def get_digger_subdomains(domain):
         url = f"https://digger.tools/lookup/{domain}/subdomains"
         r = scraper.get(url, timeout=30)
 
-        if r.status_code != 200:
-            sys.stderr.write(f"Digger.tools returned status: {r.status_code}\n")
+        if r.status_code == 429:
+            sys.stderr.write("Warning: Digger.tools is rate-limiting your requests (HTTP 429). Results from this source may be incomplete.\n")
+            return list(subs)
+        elif r.status_code != 200:
+            sys.stderr.write(f"Warning: Digger.tools returned an unexpected status: {r.status_code}. Results from this source may be incomplete.\n")
             return list(subs)
 
         # Digger may return JSON or HTML, try JSON first

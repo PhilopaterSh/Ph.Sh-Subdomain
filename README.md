@@ -1,7 +1,7 @@
 # SubHunter-Go
 
 <p align="center">
-  <img src="Ph.Sh-Sudbomain.png" alt="SubHunter-Go Logo" width="150">
+  <img src="Ph.Sh-Sudbomain.png" alt="SubHunter-Go Logo" width="150" height="100">
 </p>
 
 <h3 align="center">A Fast and Concurrent Subdomain Enumeration Tool</h3>
