@@ -19,6 +19,7 @@ SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. I
 
 - **Concurrent Engine Execution**: Runs all engines in parallel for maximum speed.
 - **Multiple Subdomain Sources**: Gathers results from the most reliable passive sources.
+- **Email Discovery**: Gathers emails associated with the domain from supported engines (visible in verbose mode).
 - **Flexible Input**: Supports scanning a single domain with `-d` or multiple domains from a file with `-dl`.
 - **Clean & Unique Output**: Automatically processes, cleans, and de-duplicates results.
 - **Cross-Platform**: Can be compiled to run on Windows, Linux, and macOS.
@@ -79,7 +80,7 @@ Here are some examples of how to use SubHunter-Go:
     Ph.Sh_Sub -d example.com -o results.txt
     ```
 
-*   **Use verbose mode to see which engine found each subdomain:**
+*   **Use verbose mode to see which engine found each subdomain and any discovered emails:**
     ```sh
     Ph.Sh_Sub -d example.com -v
     ```
@@ -107,7 +108,7 @@ Usage of SubHunter-Go:
   -t int
         Number of concurrent threads/goroutines (default 10)
   -v
-        Show the engine that found each subdomain
+        Show the engine that found each subdomain and any discovered emails
   -bruteforce
         Enable DNS bruteforce
   -wordlist string
@@ -116,21 +117,30 @@ Usage of SubHunter-Go:
         File with DNS resolvers for bruteforce
 ```
 
-## API Keys
 
-Some engines require API keys to function. The program reads these keys from **environment variables**.
+## Configuration
 
-**IMPORTANT:** Do NOT edit the `config.go` file. Set the following environment variables before running the tool.
+SubHunter-Go can load API keys from a configuration file named `Ph.Sh_Sub_config.yaml`.
+
+Upon first run, if `Ph.Sh_Sub_config.yaml` is not found, a template file will be created in the platform-specific user configuration directory (e.g., `~/.config/Ph.Sh_Sub/Ph.Sh_Sub_config.yaml` on Linux, `C:\Users\YourUser\.config\Ph.Sh_Sub\Ph.Sh_Sub_config.yaml` on Windows).
+
+**Example `Ph.Sh_Sub_config.yaml`:**
+
+```yaml
+api_keys:
+  urlscan: "YOUR_URLSCAN_API_KEY"
+  dnsdumpster: "YOUR_DNSDUMPSTER_API_KEY"
+  vt: "YOUR_VT_API_KEY"
+  securitytrails: "YOUR_SECURITYTRAILS_API_KEY"
+  shodan: "YOUR_SHODAN_API_KEY"
+```
+
+Please edit this file and replace the placeholder values with your actual API keys. Only engines with a valid API key will be used.
+
+## Version
+
+The version of the tool can be seen at startup. The version is embedded into the binary at build time using the following command:
 
 ```sh
-# Example for Linux/macOS (.zshrc, .bashrc)
-export URLSCAN_API_KEY="YOUR_URLSCAN_KEY"
-export DNSDUMPSTER_API_KEY="YOUR_DNSDUMPSTER_KEY"
-export VT_API_KEY="YOUR_VT_API_KEY"
-export SECURITYTRAILS_API_KEY="YOUR_SECURITYTRAILS_KEY"
-export SHODAN_API_KEY="YOUR_SHODAN_KEY"
-
-# Example for Windows (Command Prompt)
-set URLSCAN_API_KEY="YOUR_URLSCAN_KEY"
-set VT_API_KEY="YOUR_VT_API_KEY"
+go build -ldflags="-X main.version=v2.5" -o Ph.Sh_Sub.exe
 ```
