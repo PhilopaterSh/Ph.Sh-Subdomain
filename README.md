@@ -1,19 +1,37 @@
+<div align="center">
+
 # SubHunter-Go
 
-<p align="center">
-  <img src="Ph.Sh-Sudbomain.png" alt="SubHunter-Go Logo" width="150" height="100">
-</p>
+*A Fast and Concurrent Subdomain Enumeration Tool*
 
-<h3 align="center">A Fast and Concurrent Subdomain Enumeration Tool</h3>
+<img src="Ph.Sh-Sudbomain.png" alt="SubHunter-Go Logo" width="200">
 
-<p align="center">
-  <a href="https://goreportcard.com/report/github.com/PhilopaterSh/SubHunter-Ph.Sh"><img src="https://goreportcard.com/badge/github.com/PhilopaterSh/SubHunter-Ph.Sh" alt="Go Report Card"></a>
-  <a href="https://github.com/PhilopaterSh/SubHunter-Ph.Sh/releases"><img src="https://img.shields.io/github/v/release/PhilopaterSh/SubHunter-Ph.Sh" alt="GitHub release"></a>
-</p>
+</div>
 
----
+<div align="center">
 
-SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. It is designed to discover subdomains using a variety of passive sources, leveraging Go's concurrency for maximum speed and efficiency.
+## 📖 About The Tool
+
+SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. It is designed for security researchers and bug bounty hunters to discover subdomains using a variety of passive sources, leveraging Go's concurrency for maximum speed and efficiency.
+
+### Connect with me:
+<a href="https://www.linkedin.com/in/philopater-shenouda/"><img src="https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+<a href="https://twitter.com/PhilopaterSh"><img src="https://img.shields.io/badge/X-black?style=for-the-badge&logo=x&logoColor=white" alt="X"></a>
+<a href="https://medium.com/@PhilopaterSh"><img src="https://img.shields.io/badge/Medium-black?style=for-the-badge&logo=medium&logoColor=white" alt="Medium"></a>
+
+</div>
+
+<div align="center">
+
+## 🛠️ Technology Stack
+
+![Language](https://img.shields.io/badge/Language-Go-blue.svg)
+![Go Version](https://img.shields.io/badge/Go_Version-1.21-blue.svg)
+![Program Version](https://img.shields.io/badge/Version-v2.5-blue.svg)
+![Dependencies](https://img.shields.io/badge/Dependencies-gopkg.in/yaml.v2-brightgreen.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+
+</div>
 
 ## Features
 
@@ -136,11 +154,3 @@ api_keys:
 ```
 
 Please edit this file and replace the placeholder values with your actual API keys. Only engines with a valid API key will be used.
-
-## Version
-
-The version of the tool can be seen at startup. The version is embedded into the binary at build time using the following command:
-
-```sh
-go build -ldflags="-X main.version=v2.5" -o Ph.Sh_Sub.exe
-```
