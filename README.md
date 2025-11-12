@@ -154,3 +154,14 @@ api_keys:
 ```
 
 Please edit this file and replace the placeholder values with your actual API keys. Only engines with a valid API key will be used.
+
+## 🙏 Support My Work
+
+If you find my work useful, please consider supporting me. It helps me to dedicate more time to open-source projects.
+
+<div align="center">
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="217" height="50">](https://www.buymeacoffee.com/PhilopaterSh)
+
+</div>
+
