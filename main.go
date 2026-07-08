@@ -41,9 +41,6 @@ func cleanAndUniqueSubdomains(subdomains []string) []string {
 		if strings.HasPrefix(sub, "*.") {
 			sub = sub[2:]
 		}
-		if strings.HasPrefix(sub, "0a") {
-			sub = sub[2:]
-		}
 		if isValidSubdomain(sub) {
 
 			uniqueSubdomains[sub] = true
@@ -67,15 +64,14 @@ func cleanDomainLine(line string) string {
 
 func showAsciiArt() {
 	fmt.Println(`
-  _____   _            _____ _     
- |  __ \ | |          / ____| |    
- | |__) || |__       | (___ | |__  
- |  ___/ | '_' \     \___ \| '_' \ 
- | |     | | | |  _  ____) | | | |
- |_|     |_| |_| (_) _____/|_| |_|
-Built by : PhilopaterSh
-# LinkedIn: https://www.linkedin.com/in/philopater-shenouda/
-                              `)
+ ____   ____
+|  _ \ / ___|
+| |_) |\___ \
+|  __/  ___) |
+|_|    |____/
+
+Built by: PhilopaterSh
+# LinkedIn: https://www.linkedin.com/in/philopater-shenouda/`)
 }
 
 func main() {
@@ -96,6 +92,12 @@ func main() {
 		flag.PrintDefaults()
 	}
 	flag.Parse()
+
+	cfg, err := InitConfig()
+	if err != nil {
+		fmt.Printf("[-] Failed to load configuration: %v\n", err)
+		cfg = &Config{}
+	}
 
 	var domains []string
 	if *domainListFile != "" {
@@ -153,20 +155,20 @@ func main() {
 		&ThreatCrowdEngine{},
 	}
 
-	if apiKeys["urlscan"] != "" {
-		engines = append(engines, &UrlScanEngine{APIKey: apiKeys["urlscan"]})
+	if cfg.APIKeys.Urlscan != "" {
+		engines = append(engines, &UrlScanEngine{APIKey: cfg.APIKeys.Urlscan})
 	}
-	if apiKeys["dnsdumpster"] != "" {
-		engines = append(engines, &DNSDumpsterEngine{APIKey: apiKeys["dnsdumpster"]})
+	if cfg.APIKeys.DNSDumpster != "" {
+		engines = append(engines, &DNSDumpsterEngine{APIKey: cfg.APIKeys.DNSDumpster})
 	}
-	if apiKeys["vt"] != "" {
-		engines = append(engines, &VirusTotalEngine{APIKey: apiKeys["vt"]})
+	if cfg.APIKeys.VT != "" {
+		engines = append(engines, &VirusTotalEngine{APIKey: cfg.APIKeys.VT})
 	}
-	if apiKeys["securitytrails"] != "" {
-		engines = append(engines, &SecurityTrailsEngine{APIKey: apiKeys["securitytrails"]})
+	if cfg.APIKeys.SecurityTrails != "" {
+		engines = append(engines, &SecurityTrailsEngine{APIKey: cfg.APIKeys.SecurityTrails})
 	}
-	if apiKeys["shodan"] != "" {
-		engines = append(engines, &ShodanEngine{APIKey: apiKeys["shodan"]})
+	if cfg.APIKeys.Shodan != "" {
+		engines = append(engines, &ShodanEngine{APIKey: cfg.APIKeys.Shodan})
 	}
 
 	// Filter engines if the user provided a specific list

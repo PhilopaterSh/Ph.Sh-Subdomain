@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -42,8 +43,10 @@ func (e *CrtShEngine) Fetch(domain string, client *http.Client) ([]string, error
 		return nil, err
 	}
 
+	// name_value can contain multiple names for the same certificate (multi-SAN),
+	// separated by newlines, so each line must be treated as its own subdomain.
 	for _, entry := range entries {
-		subdomains = append(subdomains, entry.NameValue)
+		subdomains = append(subdomains, strings.Split(entry.NameValue, "\n")...)
 	}
 
 	return subdomains, nil

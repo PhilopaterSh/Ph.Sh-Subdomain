@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 // defaultWordlist provides a small list of common subdomains for bruteforcing.
@@ -95,12 +96,14 @@ func Bruteforce(domain, wordlistFile, resolversFile string, threads int) []strin
 	// Create a custom resolver if custom resolvers are provided
 	var customResolver *net.Resolver
 	if len(resolvers) > 0 {
+		var next uint64
 		customResolver = &net.Resolver{
 			PreferGo: true,
 			Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
 				d := net.Dialer{}
 				// Round-robin through custom resolvers
-				resolverAddr := resolvers[0] // Simple approach, can be improved
+				idx := atomic.AddUint64(&next, 1) - 1
+				resolverAddr := resolvers[idx%uint64(len(resolvers))]
 				return d.DialContext(ctx, "udp", resolverAddr)
 			},
 		}
