@@ -10,8 +10,15 @@ except ImportError:
     sys.exit(1)
 
 def get_digger_subdomains(domain):
-    """
-    Fetches subdomains for a given domain from digger.tools using cloudscraper.
+    """Fetches subdomains for a given domain from digger.tools using cloudscraper.
+
+    Args:
+        domain: The target domain to look up subdomains for.
+
+    Returns:
+        A sorted list of unique, lowercased subdomain strings. Returns an empty
+        list if digger.tools rate-limits the request, returns a non-200 status,
+        or an unexpected error occurs.
     """
     subs = set()
     try:

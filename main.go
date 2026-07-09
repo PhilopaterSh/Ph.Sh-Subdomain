@@ -1,3 +1,6 @@
+// Command Ph.Sh_Sub (SubHunter-Go) is a fast, concurrent passive subdomain enumeration tool that
+// aggregates results from certificate-transparency logs, search engines, and threat-intelligence
+// APIs, then cleans and deduplicates them into a single sorted list.
 package main
 
 import (
@@ -62,6 +65,7 @@ func cleanDomainLine(line string) string {
 	return reg.ReplaceAllString(line, "")
 }
 
+// showAsciiArt prints the tool's startup banner to stdout.
 func showAsciiArt() {
 	fmt.Println(`
  ____   ____
@@ -74,6 +78,8 @@ Built by: PhilopaterSh
 # LinkedIn: https://www.linkedin.com/in/philopater-shenouda/`)
 }
 
+// main parses CLI flags, runs the selected engines concurrently for each target domain, and
+// prints/saves the resulting unique subdomains.
 func main() {
 	showAsciiArt()
 	// Define command-line flags
