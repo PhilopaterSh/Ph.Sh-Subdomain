@@ -1,10 +1,10 @@
 <div align="center">
 
-# SubHunter-Go
+# Ph.Sh-Subdomain
 
 *A Fast and Concurrent Subdomain Enumeration Tool*
 
-<img src="Ph.Sh-Sudbomain.png" alt="SubHunter-Go Logo" width="200">
+<img src="Ph.Sh-Subdomain.png" alt="SubHunter-Go Logo" width="200">
 
 </div>
 
@@ -12,7 +12,7 @@
 
 ## 📖 About The Tool
 
-SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. It is designed for security researchers and bug bounty hunters to discover subdomains using a variety of passive sources, leveraging Go's concurrency for maximum speed and efficiency.
+Ph.Sh-Subdomain is a fast and effective subdomain enumeration tool written in Go. It is designed for security researchers and bug bounty hunters to discover subdomains using a variety of passive sources, leveraging Go's concurrency for maximum speed and efficiency.
 
 ### Connect with me:
 <a href="https://www.linkedin.com/in/philopater-shenouda/"><img src="https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
@@ -136,7 +136,7 @@ Usage of SubHunter-Go:
 
 ## Configuration
 
-SubHunter-Go can load API keys from a configuration file named `Ph.Sh_Sub_config.yaml`.
+Ph.Sh-Subdomain can load API keys from a configuration file named `Ph.Sh_Sub_config.yaml`.
 
 Upon first run, if `Ph.Sh_Sub_config.yaml` is not found, a template file will be created in the platform-specific user configuration directory (e.g., `~/.config/Ph.Sh_Sub/Ph.Sh_Sub_config.yaml` on Linux, `%AppData%\Ph.Sh_Sub\Ph.Sh_Sub_config.yaml` on Windows).
 
