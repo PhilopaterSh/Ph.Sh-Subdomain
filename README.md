@@ -4,7 +4,7 @@
 
 *A Fast and Concurrent Subdomain Enumeration Tool*
 
-<img src="Ph.Sh-Subdomain.png" alt="SubHunter-Go Logo" width="200">
+<img src="Ph.Sh-Subdomain.png" alt="Ph.Sh-Subdomain Logo" width="200">
 
 </div>
 
@@ -79,7 +79,7 @@ go install -v github.com/PhilopaterSh/Ph.Sh_Sub@latest
 
 ## Usage
 
-Here are some examples of how to use SubHunter-Go:
+Here are some examples of how to use Ph.Sh-Subdomain:
 
 *   **Scan a single domain:**
     ```sh
@@ -110,7 +110,7 @@ Here are some examples of how to use SubHunter-Go:
 ### All Options
 
 ```
-Usage of SubHunter-Go:
+Usage of Ph.Sh-Subdomain:
   -d string
         Target domain (e.g., example.com)
   -dl string
