@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"net"
 	"os"
@@ -72,6 +74,30 @@ func loadResolvers(path string) ([]string, error) {
 	return resolvers, scanner.Err()
 }
 
+// hasWildcardDNS detects wildcard DNS records by resolving random subdomains
+// that should never exist. If any of them resolves, every bruteforce "hit"
+// for this domain would be a false positive.
+func hasWildcardDNS(domain string, resolver *net.Resolver) bool {
+	for i := 0; i < 2; i++ {
+		b := make([]byte, 8)
+		if _, err := rand.Read(b); err != nil {
+			return false // cannot verify; don't block bruteforce on entropy failure
+		}
+		host := hex.EncodeToString(b) + "." + domain
+		var ips []string
+		var err error
+		if resolver != nil {
+			ips, err = resolver.LookupHost(context.Background(), host)
+		} else {
+			ips, err = net.LookupHost(host)
+		}
+		if err == nil && len(ips) > 0 {
+			return true
+		}
+	}
+	return false
+}
+
 // Bruteforce performs DNS bruteforcing for a given domain.
 func Bruteforce(domain, wordlistFile, resolversFile string, threads int) []string {
 	wordlist, err := loadWordlist(wordlistFile)
@@ -107,6 +133,13 @@ func Bruteforce(domain, wordlistFile, resolversFile string, threads int) []strin
 				return d.DialContext(ctx, "udp", resolverAddr)
 			},
 		}
+	}
+
+	// A wildcard record makes every candidate "resolve" — abort with a clear
+	// warning instead of flooding the user with thousands of false positives.
+	if hasWildcardDNS(domain, customResolver) {
+		fmt.Println("[!] Wildcard DNS detected: random subdomains resolve. Bruteforce results would be false positives — skipping bruteforce for this domain.")
+		return nil
 	}
 
 	// Start worker goroutines

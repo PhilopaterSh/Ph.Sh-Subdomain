@@ -29,7 +29,7 @@ func (e *NetcraftEngine) Fetch(domain string, client *http.Client) ([]string, er
 		if err != nil {
 			return nil, err
 		}
-		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+		req.Header.Set("User-Agent", searchEngineUserAgent)
 
 		resp, err := client.Do(req)
 		if err != nil {
@@ -44,8 +44,8 @@ func (e *NetcraftEngine) Fetch(domain string, client *http.Client) ([]string, er
 
 		bodyStr := string(body)
 
-		// Regex to find subdomains
-		re := regexp.MustCompile(fmt.Sprintf(`([a-zA-Z0-9_-]+\.%s)`, regexp.QuoteMeta(domain)))
+		// Regex to find subdomains (multi-label aware)
+		re := subdomainRegex(domain)
 		matches := re.FindAllString(bodyStr, -1)
 		subdomains = append(subdomains, matches...)
 

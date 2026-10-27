@@ -29,8 +29,7 @@ func (e *AlienVaultEngine) Fetch(domain string, client *http.Client) ([]string, 
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
-
+	req.Header.Set("User-Agent", searchEngineUserAgent)
 
 	resp, err := client.Do(req)
 	if err != nil {

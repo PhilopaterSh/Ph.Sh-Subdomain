@@ -37,7 +37,6 @@ SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. I
 
 - **Concurrent Engine Execution**: Runs all engines in parallel for maximum speed.
 - **Multiple Subdomain Sources**: Gathers results from the most reliable passive sources.
-- **Email Discovery**: Gathers emails associated with the domain from supported engines (visible in verbose mode).
 - **Flexible Input**: Supports scanning a single domain with `-d` or multiple domains from a file with `-dl`.
 - **Clean & Unique Output**: Automatically processes, cleans, and de-duplicates results.
 - **Cross-Platform**: Can be compiled to run on Windows, Linux, and macOS.
@@ -56,14 +55,13 @@ SubHunter-Go is a fast and effective subdomain enumeration tool written in Go. I
 - SecurityTrails
 - Shodan
 - ShrewdEye
-- **ThreatCrowd** (Restored)
 - Urlscan.io
 - VirusTotal
 - Yahoo
 
 ## Requirements
 
-- **Go**: Version 1.18 or newer (only required for installation or building from source).
+- **Go**: Version 1.21 or newer (only required for installation or building from source).
 - **Python**: Version 3.6+ is recommended. The `digger` engine requires Python and some external libraries. You can install them using pip:
   ```sh
   pip install -r requirements.txt
@@ -98,13 +96,13 @@ Here are some examples of how to use SubHunter-Go:
     Ph.Sh_Sub -d example.com -o results.txt
     ```
 
-*   **Use verbose mode to see which engine found each subdomain and any discovered emails:**
+*   **Use verbose mode to see which engine found each subdomain:**
     ```sh
     Ph.Sh_Sub -d example.com -v
     ```
     
 *   **Handle SSL Certificate Errors:**
-    Some servers (like ThreatCrowd) may have invalid SSL certificates. Use the `--no-ssl-verify` flag to bypass these errors.
+    Use the `--no-ssl-verify` flag to bypass SSL verification errors when scanning through proxies or intercepting gateways.
     ```sh
     Ph.Sh_Sub -d example.com --no-ssl-verify
     ```
@@ -126,7 +124,7 @@ Usage of SubHunter-Go:
   -t int
         Number of concurrent threads/goroutines (default 10)
   -v
-        Show the engine that found each subdomain and any discovered emails
+        Show the engine that found each subdomain
   -bruteforce
         Enable DNS bruteforce
   -wordlist string
@@ -140,7 +138,7 @@ Usage of SubHunter-Go:
 
 SubHunter-Go can load API keys from a configuration file named `Ph.Sh_Sub_config.yaml`.
 
-Upon first run, if `Ph.Sh_Sub_config.yaml` is not found, a template file will be created in the platform-specific user configuration directory (e.g., `~/.config/Ph.Sh_Sub/Ph.Sh_Sub_config.yaml` on Linux, `C:\Users\YourUser\.config\Ph.Sh_Sub\Ph.Sh_Sub_config.yaml` on Windows).
+Upon first run, if `Ph.Sh_Sub_config.yaml` is not found, a template file will be created in the platform-specific user configuration directory (e.g., `~/.config/Ph.Sh_Sub/Ph.Sh_Sub_config.yaml` on Linux, `%AppData%\Ph.Sh_Sub\Ph.Sh_Sub_config.yaml` on Windows).
 
 **Example `Ph.Sh_Sub_config.yaml`:**
 

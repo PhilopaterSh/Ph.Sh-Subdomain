@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
-	"regexp"
 	"time"
 )
 
@@ -27,24 +26,23 @@ func (e *YahooEngine) Fetch(domain string, client *http.Client) ([]string, error
 		if err != nil {
 			return nil, err
 		}
-		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+		req.Header.Set("User-Agent", searchEngineUserAgent)
 
 		resp, err := client.Do(req)
 		if err != nil {
 			return nil, err
 		}
-		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			return nil, err
+		}
 
 		if resp.StatusCode != http.StatusOK {
 			return nil, fmt.Errorf("yahoo returned status: %s", resp.Status)
 		}
 
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		re := regexp.MustCompile(fmt.Sprintf(`([a-zA-Z0-9_-]+\.%s)`, regexp.QuoteMeta(domain)))
+		re := subdomainRegex(domain)
 		matches := re.FindAllString(string(body), -1)
 		subdomains = append(subdomains, matches...)
 

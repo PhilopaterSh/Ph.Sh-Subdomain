@@ -23,27 +23,38 @@ func (e *DiggerToolsEngine) Name() string {
 
 // Fetch returns a list of subdomains found by the engine.
 func (e *DiggerToolsEngine) Fetch(domain string, client *http.Client) ([]string, error) {
-	exePath, err := os.Executable()
+	// Write the embedded script to a user-writable cache directory (not next to
+	// the binary, which may live in a protected path like /usr/local/bin).
+	baseDir, err := os.UserCacheDir()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get executable path: %v", err)
+		return nil, fmt.Errorf("failed to get user cache directory: %v", err)
 	}
-	exeDir := filepath.Dir(exePath)
-	scriptPath := filepath.Join(exeDir, "digger_wrapper.py")
-	// fmt.Printf("DEBUG: scriptPath = %s\n", scriptPath)
+	scriptDir := filepath.Join(baseDir, "Ph.Sh_Sub")
+	scriptPath := filepath.Join(scriptDir, "digger_wrapper.py")
 
-
-	// Check if the script exists, if not, create it from the embedded content.
 	if _, err := os.Stat(scriptPath); os.IsNotExist(err) {
-		// fmt.Printf("DEBUG: digger_wrapper.py does not exist at %s, creating it.\n", scriptPath)
-		err := os.WriteFile(scriptPath, []byte(diggerWrapperScript), 0755)
-		if err != nil {
+		if err := os.MkdirAll(scriptDir, 0755); err != nil {
+			return nil, fmt.Errorf("failed to create digger cache directory: %v", err)
+		}
+	}
+	// Keep the script in sync with the binary: rewrite it whenever the embedded
+	// content changed (e.g. after a tool upgrade).
+	if existing, err := os.ReadFile(scriptPath); err != nil || string(existing) != diggerWrapperScript {
+		if err := os.WriteFile(scriptPath, []byte(diggerWrapperScript), 0755); err != nil {
 			return nil, fmt.Errorf("failed to create digger_wrapper.py: %v", err)
 		}
-	} else {
-		// fmt.Printf("DEBUG: digger_wrapper.py already exists at %s.\n", scriptPath)
 	}
 
-	cmd := exec.Command("python", scriptPath, domain)
+	// Prefer python3 (the only interpreter present on modern Linux/macOS).
+	python, err := exec.LookPath("python3")
+	if err != nil {
+		python, err = exec.LookPath("python")
+		if err != nil {
+			return nil, fmt.Errorf("no python interpreter found in PATH (tried python3 and python)")
+		}
+	}
+
+	cmd := exec.Command(python, scriptPath, domain)
 
 	output, err := cmd.Output()
 	if err != nil {

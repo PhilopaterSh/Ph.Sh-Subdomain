@@ -33,7 +33,10 @@ type Result struct {
 }
 
 // isValidSubdomain checks if a string is a valid subdomain.
-var isValidSubdomain = regexp.MustCompile(`(?i)^([a-z0-9\*]+(-[a-z0-9]+)*\.)+[a-z]{2,}$`).MatchString
+// Allows underscores in labels (e.g. _dmarc.example.com), wildcard entries,
+// embedded hyphens such as "xn--" punycode labels, and IDN punycode TLDs
+// (e.g. example.xn--p1ai).
+var isValidSubdomain = regexp.MustCompile(`(?i)^([a-z0-9\*_][a-z0-9\*_-]*\.)+([a-z]{2,}|xn--[a-z0-9-]+)$`).MatchString
 
 // cleanAndUniqueSubdomains processes a list of subdomains to make them unique and valid.
 func cleanAndUniqueSubdomains(subdomains []string) []string {
@@ -58,11 +61,19 @@ func cleanAndUniqueSubdomains(subdomains []string) []string {
 	return cleaned
 }
 
-// cleanDomainLine removes invalid characters from a line in the domain list file.
+// cleanDomainLine extracts the domain candidate from a line in the domain list
+// file. It keeps only the leading run of domain-legal characters, so input like
+// "example.com,other.com" or "example.com/extra" never fuses into a bogus domain.
 func cleanDomainLine(line string) string {
-	// This regex removes anything that is not a letter, number, dot, or hyphen.
-	reg := regexp.MustCompile(`[^a-zA-Z0-9.-]`)
-	return reg.ReplaceAllString(line, "")
+	line = strings.TrimSpace(line)
+	for i, r := range line {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '.' || r == '-' {
+			continue
+		}
+		line = line[:i]
+		break
+	}
+	return strings.Trim(line, ".-")
 }
 
 // showAsciiArt prints the tool's startup banner to stdout.
@@ -158,22 +169,24 @@ func main() {
 		&BaiduEngine{},
 		&AskEngine{},
 		&NetcraftEngine{},
-		&ThreatCrowdEngine{},
 	}
 
-	if cfg.APIKeys.Urlscan != "" {
+	// API-key engines are only enabled when a real key is configured
+	// (placeholder values such as "YOUR_..." written by the config template
+	// must not activate the engines and fail on every run).
+	if isRealAPIKey(cfg.APIKeys.Urlscan) {
 		engines = append(engines, &UrlScanEngine{APIKey: cfg.APIKeys.Urlscan})
 	}
-	if cfg.APIKeys.DNSDumpster != "" {
+	if isRealAPIKey(cfg.APIKeys.DNSDumpster) {
 		engines = append(engines, &DNSDumpsterEngine{APIKey: cfg.APIKeys.DNSDumpster})
 	}
-	if cfg.APIKeys.VT != "" {
+	if isRealAPIKey(cfg.APIKeys.VT) {
 		engines = append(engines, &VirusTotalEngine{APIKey: cfg.APIKeys.VT})
 	}
-	if cfg.APIKeys.SecurityTrails != "" {
+	if isRealAPIKey(cfg.APIKeys.SecurityTrails) {
 		engines = append(engines, &SecurityTrailsEngine{APIKey: cfg.APIKeys.SecurityTrails})
 	}
-	if cfg.APIKeys.Shodan != "" {
+	if isRealAPIKey(cfg.APIKeys.Shodan) {
 		engines = append(engines, &ShodanEngine{APIKey: cfg.APIKeys.Shodan})
 	}
 
@@ -181,8 +194,25 @@ func main() {
 	if *selectedEngines != "" {
 		userSelection := strings.Split(*selectedEngines, ",")
 		selectedMap := make(map[string]bool)
+		knownEngines := make(map[string]bool)
+		for _, engine := range engines {
+			knownEngines[engine.Name()] = true
+		}
 		for _, e := range userSelection {
-			selectedMap[strings.TrimSpace(e)] = true
+			name := strings.TrimSpace(e)
+			if name == "" {
+				continue
+			}
+			if knownEngines[name] {
+				selectedMap[name] = true
+			} else {
+				fmt.Printf("[!] Unknown engine '%s' — skipping (available: ", name)
+				var names []string
+				for _, engine := range engines {
+					names = append(names, engine.Name())
+				}
+				fmt.Println(strings.Join(names, ", ") + ")")
+			}
 		}
 
 		var filteredEngines []Engine
@@ -192,6 +222,10 @@ func main() {
 			}
 		}
 		engines = filteredEngines
+		if len(engines) == 0 {
+			fmt.Println("[-] No valid engines selected — nothing to run.")
+			os.Exit(1)
+		}
 	}
 
 	allSubdomains := make(map[string]bool)
@@ -245,6 +279,7 @@ func main() {
 		// --- Optional Bruteforce Step ---
 		if *bruteforce {
 			bruteResults := Bruteforce(currentDomain, *wordlistFile, *resolversFile, *threads)
+			engineResults["bruteforce"] = append(engineResults["bruteforce"], bruteResults...)
 			for _, sub := range bruteResults {
 				allSubdomains[sub] = true
 			}

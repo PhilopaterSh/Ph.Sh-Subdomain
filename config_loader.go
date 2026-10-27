@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -60,7 +60,7 @@ func createDefaultConfigFile(path string) error {
 			return fmt.Errorf("failed to marshal default config: %w", err)
 		}
 
-		if err := ioutil.WriteFile(path, data, 0644); err != nil {
+		if err := os.WriteFile(path, data, 0600); err != nil {
 			return fmt.Errorf("failed to write default config file: %w", err)
 		}
 		fmt.Printf("[*] Created default configuration file at: %s\n", path)
@@ -71,7 +71,7 @@ func createDefaultConfigFile(path string) error {
 
 // loadConfig loads the configuration from the specified path.
 func loadConfig(path string) (*Config, error) {
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
@@ -81,6 +81,13 @@ func loadConfig(path string) (*Config, error) {
 		return nil, fmt.Errorf("failed to unmarshal config file: %w", err)
 	}
 	return &config, nil
+}
+
+// isRealAPIKey reports whether the configured value is an actual key and not
+// one of the "YOUR_..." placeholders written by the default config template.
+func isRealAPIKey(key string) bool {
+	key = strings.TrimSpace(key)
+	return key != "" && !strings.HasPrefix(strings.ToUpper(key), "YOUR_")
 }
 
 // InitConfig initializes and loads the configuration.
