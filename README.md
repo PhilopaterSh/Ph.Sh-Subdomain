@@ -25,9 +25,10 @@ Ph.Sh-Subdomain is a fast and effective subdomain enumeration tool written in Go
 
 ## 🛠️ Technology Stack
 
+[![Go](https://github.com/PhilopaterSh/Ph.Sh-Subdomain/actions/workflows/go.yml/badge.svg)](https://github.com/PhilopaterSh/Ph.Sh-Subdomain/actions/workflows/go.yml)
 ![Language](https://img.shields.io/badge/Language-Go-blue.svg)
 ![Go Version](https://img.shields.io/badge/Go_Version-1.21-blue.svg)
-![Program Version](https://img.shields.io/badge/Version-v2.5-blue.svg)
+![Program Version](https://img.shields.io/badge/Version-v2.7-blue.svg)
 ![Dependencies](https://img.shields.io/badge/Dependencies-gopkg.in/yaml.v2-brightgreen.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
