@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -33,24 +32,8 @@ func (e *UrlScanEngine) Fetch(domain string, client *http.Client) ([]string, err
 
 	url := fmt.Sprintf("https://urlscan.io/api/v1/search/?q=domain:%s", domain)
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("API-Key", e.APIKey)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("urlscan.io returned status: %s", resp.Status)
-	}
-
 	var response UrlScanResponse
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+	if err := fetchJSON(client, url, map[string]string{"API-Key": e.APIKey}, &response); err != nil {
 		return nil, err
 	}
 

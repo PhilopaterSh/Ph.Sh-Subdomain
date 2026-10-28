@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -37,24 +36,8 @@ func (e *DNSDumpsterEngine) Fetch(domain string, client *http.Client) ([]string,
 
 	url := fmt.Sprintf("https://api.dnsdumpster.com/domain/%s", domain)
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("X-API-Key", e.APIKey)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("dnsdumpster returned status: %s", resp.Status)
-	}
-
 	var response DNSDumpsterResponse
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+	if err := fetchJSON(client, url, map[string]string{"X-API-Key": e.APIKey}, &response); err != nil {
 		return nil, err
 	}
 

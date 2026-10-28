@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -30,25 +29,9 @@ func (e *VirusTotalEngine) Fetch(domain string, client *http.Client) ([]string, 
 	}
 
 	url := fmt.Sprintf("https://www.virustotal.com/api/v3/domains/%s/subdomains?limit=40", domain)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("x-apikey", e.APIKey)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status code: %d", resp.StatusCode)
-	}
 
 	var vtResponse VirusTotalResponse
-	if err := json.NewDecoder(resp.Body).Decode(&vtResponse); err != nil {
+	if err := fetchJSON(client, url, map[string]string{"x-apikey": e.APIKey}, &vtResponse); err != nil {
 		return nil, err
 	}
 

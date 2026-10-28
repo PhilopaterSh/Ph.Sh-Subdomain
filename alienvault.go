@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -25,24 +24,8 @@ func (e *AlienVaultEngine) Name() string {
 func (e *AlienVaultEngine) Fetch(domain string, client *http.Client) ([]string, error) {
 	url := fmt.Sprintf("https://otx.alienvault.com/api/v1/indicators/domain/%s/passive_dns", domain)
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("User-Agent", searchEngineUserAgent)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("alienvault returned status: %s", resp.Status)
-	}
-
 	var response AlienVaultResponse
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+	if err := fetchJSON(client, url, nil, &response); err != nil {
 		return nil, err
 	}
 

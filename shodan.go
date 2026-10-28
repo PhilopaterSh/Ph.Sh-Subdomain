@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -28,23 +27,9 @@ func (e *ShodanEngine) Fetch(domain string, client *http.Client) ([]string, erro
 	}
 
 	url := fmt.Sprintf("https://api.shodan.io/dns/domain/%s?key=%s", domain, e.APIKey)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status code: %d", resp.StatusCode)
-	}
 
 	var shodanResponse ShodanResponse
-	if err := json.NewDecoder(resp.Body).Decode(&shodanResponse); err != nil {
+	if err := fetchJSON(client, url, nil, &shodanResponse); err != nil {
 		return nil, err
 	}
 

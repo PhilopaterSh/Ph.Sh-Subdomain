@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -28,25 +27,9 @@ func (e *SecurityTrailsEngine) Fetch(domain string, client *http.Client) ([]stri
 	}
 
 	url := fmt.Sprintf("https://api.securitytrails.com/v1/domain/%s/subdomains", domain)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("APIKEY", e.APIKey)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status code: %d", resp.StatusCode)
-	}
 
 	var stResponse SecurityTrailsResponse
-	if err := json.NewDecoder(resp.Body).Decode(&stResponse); err != nil {
+	if err := fetchJSON(client, url, map[string]string{"APIKEY": e.APIKey}, &stResponse); err != nil {
 		return nil, err
 	}
 
