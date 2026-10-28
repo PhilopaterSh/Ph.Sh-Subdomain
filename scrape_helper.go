@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"time"
 )
 
 // searchEngineUserAgent is the User-Agent header used by the search-engine scraping engines.
@@ -25,6 +26,11 @@ func scrapeSearchEnginePages(client *http.Client, domain string, pages int, urlF
 	re := subdomainRegex(domain)
 
 	for i := 0; i < pages; i++ {
+		// Politeness delay between consecutive result pages — hitting a
+		// search engine back-to-back is a quick way to get blocked.
+		if i > 0 {
+			time.Sleep(600 * time.Millisecond)
+		}
 		req, err := http.NewRequest("GET", urlForPage(i), nil)
 		if err != nil {
 			return subdomains
