@@ -44,9 +44,7 @@ func cleanAndUniqueSubdomains(subdomains []string) []string {
 	for _, sub := range subdomains {
 		sub = strings.ToLower(sub)
 		sub = strings.TrimSpace(sub)
-		if strings.HasPrefix(sub, "*.") {
-			sub = sub[2:]
-		}
+		sub = strings.TrimPrefix(sub, "*.")
 		if isValidSubdomain(sub) {
 
 			uniqueSubdomains[sub] = true
@@ -123,7 +121,7 @@ func main() {
 			fmt.Printf("[-] Failed to open domain list file: %v\n", err)
 			os.Exit(1)
 		}
-		defer file.Close()
+		defer func() { _ = file.Close() }()
 
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
@@ -320,7 +318,7 @@ func main() {
 		if err != nil {
 			fmt.Printf("\n[!] Failed to save file: %v\n", err)
 		} else {
-			defer file.Close()
+			defer func() { _ = file.Close() }()
 			for _, sub := range finalSubdomains {
 				_, _ = file.WriteString(sub + "\n")
 			}

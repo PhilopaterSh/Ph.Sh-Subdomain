@@ -32,7 +32,7 @@ func (e *CrtShEngine) Fetch(domain string, client *http.Client) ([]string, error
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("crt.sh returned status: %s", resp.Status)

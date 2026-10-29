@@ -43,7 +43,7 @@ func scrapeSearchEnginePages(client *http.Client, domain string, pages int, urlF
 		}
 
 		body, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		if err != nil {
 			continue
 		}

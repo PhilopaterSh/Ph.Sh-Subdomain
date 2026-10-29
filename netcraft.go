@@ -37,7 +37,7 @@ func (e *NetcraftEngine) Fetch(domain string, client *http.Client) ([]string, er
 		}
 
 		body, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		if err != nil {
 			break
 		}

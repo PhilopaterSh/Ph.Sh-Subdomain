@@ -36,7 +36,7 @@ func loadWordlist(path string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open wordlist file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	var lines []string
 	scanner := bufio.NewScanner(file)
@@ -58,7 +58,7 @@ func loadResolvers(path string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open resolvers file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	var resolvers []string
 	scanner := bufio.NewScanner(file)

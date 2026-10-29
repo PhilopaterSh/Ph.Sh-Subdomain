@@ -37,7 +37,7 @@ func (e *GoogleEngine) Fetch(domain string, client *http.Client) ([]string, erro
 			return nil, err
 		}
 		body, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		if err != nil {
 			return nil, err
 		}
