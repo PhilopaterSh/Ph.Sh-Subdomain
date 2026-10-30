@@ -49,9 +49,13 @@ def get_digger_subdomains(domain):
             for sub in found:
                 subs.add(sub.lower())
     except Exception as e:
+        # Hard failure: report to the Go caller via a non-zero exit so the
+        # engine shows a real error instead of "0 subs" with no explanation.
+        # (Soft degradation — 429 / non-200 — is handled above with a warning
+        # and exit code 0.)
         sys.stderr.write(f"An unexpected error occurred in digger_wrapper: {e}\n")
-        pass
-    
+        sys.exit(1)
+
     return sorted(list(subs))
 
 if __name__ == "__main__":

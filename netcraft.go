@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // NetcraftEngine is an engine that scrapes subdomains from Netcraft.
@@ -55,6 +56,7 @@ func (e *NetcraftEngine) Fetch(domain string, client *http.Client) ([]string, er
 			nextURL = "https://searchdns.netcraft.com" + match[1]
 			// Netcraft links can have HTML entities, clean them
 			nextURL = strings.ReplaceAll(nextURL, "&amp;", "&")
+			time.Sleep(800 * time.Millisecond) // Politeness delay between pages
 		} else {
 			nextURL = "" // No more pages
 		}
