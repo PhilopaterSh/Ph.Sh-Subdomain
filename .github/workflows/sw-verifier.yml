@@ -106,7 +106,20 @@ jobs:
           Write-Host "selftest process exit code: $code"
           if (Test-Path bin/64/selftest-result.txt) { Get-Content bin/64/selftest-result.txt }
           else { Write-Host 'FAIL: selftest-result.txt was not produced (process died before any flush)'; if (-not $code) { $code = 99 } }
-          if ($code -ne 0) { Write-Error "composite selftest failed (exit=$code)"; exit 1 }
+          # POST-MORTEM: any WER dump = analyze it with cdb (symbols from the
+          # just-built PDB + msdl) BEFORE failing - the faulting frame is the
+          # answer, not a red X
+          if ($code -ne 0) {
+            $cdb = "C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe"
+            $dump = Get-ChildItem "dumps" -Filter "simplewall.exe.*.dmp" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+            if ((Test-Path $cdb) -and $dump) {
+              Write-Host "POST-MORTEM cdb on $($dump.Name)"
+              $env:_NT_SYMBOL_PATH = "$env:GITHUB_WORKSPACE\bin\64;srv*C:\symbols*https://msdl.microsoft.com/download/symbols"
+              & $cdb -z $dump.FullName -c ".symfix+; .reload; !analyze -v; ~*k 30; qd" 2>&1 | Out-Host
+            } else { Write-Host 'no cdb or no dump for post-mortem' }
+            Write-Error "composite selftest failed (exit=$code)"
+            exit 1
+          }
           if (Test-Path "$env:USERPROFILE\Desktop\simplewall_crash") { Copy-Item "$env:USERPROFILE\Desktop\simplewall_crash\*" gui-screens/ -Force -ErrorAction SilentlyContinue }
           if (Test-Path bin/64/crash-report.txt) { Copy-Item bin/64/crash-report.txt gui-screens/ -Force; Get-Content bin/64/crash-report.txt }
           else { Write-Host 'no crash-report.txt (no SEH exception this run)' }
